@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: fad12cf940fd
+Revision ID: 5d285c1e6960
 Revises: 
-Create Date: 2023-06-16 18:41:16.727423
+Create Date: 2023-06-17 18:47:52.806643
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fad12cf940fd'
+revision = '5d285c1e6960'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -41,9 +41,9 @@ def upgrade():
     sa.Column('link', sa.Text(), nullable=True),
     sa.Column('img', sa.Text(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('folder', sa.Integer(), nullable=False),
+    sa.Column('folder_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['folder'], ['folder.id'], ),
+    sa.ForeignKeyConstraint(['folder_id'], ['folder.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('display_title', 'user_id')

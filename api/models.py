@@ -40,7 +40,7 @@ class Review(db.Model, BaseFields):
     img = db.Column(db.Text)
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    folder = db.Column(db.Integer, db.ForeignKey("folder.id"), nullable=False)
+    folder_id = db.Column(db.Integer, db.ForeignKey("folder.id"), nullable=False)
 
     def __repf__(self):
         return "<Review {}>".format(self.display_title)

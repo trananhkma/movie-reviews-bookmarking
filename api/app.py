@@ -1,10 +1,24 @@
 import os
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask_migrate import Migrate
+from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.exceptions import HTTPException
+
+from api.core.errors import INTERNAL_ERROR
+from api.core.exceptions import GenericException
 
 app = Flask(__name__)
+
+
+@app.errorhandler(Exception)
+def error_handler(e):
+    if not isinstance(e, HTTPException):
+        raise GenericException(INTERNAL_ERROR)
+
+    return jsonify(error=str(e)), e.code
+
 
 db_uri = "postgresql+psycopg2://{user}:{pw}@{host}/{db}".format(
     user=os.getenv("POSTGRES_USER"),
@@ -20,6 +34,14 @@ app.config.update(
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+api = Api(app)
+api.prefix = "/api"
+
+# avoid circular import
+from api.endpoints.auth import SignUp
+
+api.add_resource(SignUp, "/signup")
 
 
 if __name__ == "__main__":
