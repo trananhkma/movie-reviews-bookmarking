@@ -1,17 +1,19 @@
 from flask_restful import Resource, fields, marshal_with, reqparse
 
-from api.common.utils import create_user
+from api.common.utils import create_user, valid_string
 
 signup_request_body = reqparse.RequestParser()
 signup_request_body.add_argument(
     "username",
     required=True,
     location="json",
+    type=valid_string,
 )
 signup_request_body.add_argument(
     "password",
     required=True,
     location="json",
+    type=valid_string,
 )
 
 signup_response = {
