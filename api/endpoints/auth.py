@@ -28,7 +28,7 @@ class SignUp(Resource):
     def post(self):
         body = signup_request_body.parse_args()
         user = create_user(body["username"], body["password"])
-        return user
+        return user, HTTPStatus.CREATED
 
 
 ########################################################################################
