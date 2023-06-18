@@ -1,6 +1,8 @@
+from http import HTTPStatus
+
 from flask_restful import Resource, fields, marshal_with, reqparse
 
-from api.common.utils import create_user, valid_string
+from api.common.utils import create_token, create_user, valid_string
 
 signup_request_body = reqparse.RequestParser()
 signup_request_body.add_argument(
@@ -27,3 +29,32 @@ class SignUp(Resource):
         body = signup_request_body.parse_args()
         user = create_user(body["username"], body["password"])
         return user
+
+
+########################################################################################
+
+
+login_request_body = reqparse.RequestParser()
+login_request_body.add_argument(
+    "username",
+    required=True,
+    location="json",
+    type=valid_string,
+)
+login_request_body.add_argument(
+    "password",
+    required=True,
+    location="json",
+    type=valid_string,
+)
+login_response = {
+    "token": fields.String,
+}
+
+
+class Login(Resource):
+    @marshal_with(login_response)
+    def post(self):
+        body = login_request_body.parse_args()
+        token = create_token(body["username"], body["password"])
+        return {"token": token}, HTTPStatus.OK

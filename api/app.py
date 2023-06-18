@@ -39,9 +39,10 @@ api = Api(app)
 api.prefix = "/api"
 
 # avoid circular import
-from api.endpoints.auth import SignUp
+from api.endpoints.auth import Login, SignUp
 
 api.add_resource(SignUp, "/signup")
+api.add_resource(Login, "/auth")
 
 
 if __name__ == "__main__":
