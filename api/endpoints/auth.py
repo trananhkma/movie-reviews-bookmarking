@@ -1,61 +1,45 @@
 from http import HTTPStatus
 
-from flask_restful import Resource, fields, marshal_with, reqparse
+from flask_pydantic import validate
+from flask_restful import Resource
+from pydantic import BaseModel, validator
 
 from api.common.utils import valid_string
 from api.services.auth import create_token, create_user
 
-signup_request_body = reqparse.RequestParser()
-signup_request_body.add_argument(
-    "username",
-    required=True,
-    location="json",
-    type=valid_string,
-)
-signup_request_body.add_argument(
-    "password",
-    required=True,
-    location="json",
-    type=valid_string,
-)
 
-signup_response = {
-    "username": fields.String,
-}
+class SignupRequest(BaseModel):
+    username: str
+    password: str
+
+    username_validator = validator("username", allow_reuse=True)(valid_string)
+    password_validator = validator("password", allow_reuse=True)(valid_string)
+
+
+class SignupResponse(BaseModel):
+    username: str
 
 
 class SignUp(Resource):
-    @marshal_with(signup_response)
-    def post(self):
-        body = signup_request_body.parse_args()
-        user = create_user(body["username"], body["password"])
-        return user, HTTPStatus.CREATED
+    @validate()
+    def post(self, body: SignupRequest):
+        user = create_user(body.username, body.password)
+        return SignupResponse(username=user.username), HTTPStatus.CREATED
 
 
 ########################################################################################
 
 
-login_request_body = reqparse.RequestParser()
-login_request_body.add_argument(
-    "username",
-    required=True,
-    location="json",
-    type=valid_string,
-)
-login_request_body.add_argument(
-    "password",
-    required=True,
-    location="json",
-    type=valid_string,
-)
-login_response = {
-    "token": fields.String,
-}
+class LoginRequest(SignupRequest):
+    pass
+
+
+class LoginResponse(BaseModel):
+    token: str
 
 
 class Login(Resource):
-    @marshal_with(login_response)
-    def post(self):
-        body = login_request_body.parse_args()
-        token = create_token(body["username"], body["password"])
-        return {"token": token}, HTTPStatus.OK
+    @validate()
+    def post(self, body: LoginRequest):
+        token = create_token(body.username, body.password)
+        return LoginResponse(token=token), HTTPStatus.OK
