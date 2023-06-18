@@ -40,9 +40,11 @@ api.prefix = "/api"
 
 # avoid circular import
 from api.endpoints.auth import Login, SignUp
+from api.endpoints.folder import Folder
 
 api.add_resource(SignUp, "/signup")
 api.add_resource(Login, "/auth")
+api.add_resource(Folder, "/folder", "/folder/<int:folder_id>")
 
 
 if __name__ == "__main__":
