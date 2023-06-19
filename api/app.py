@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, jsonify
+from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
@@ -10,6 +11,7 @@ from api.core.errors import INTERNAL_ERROR
 from api.core.exceptions import GenericException
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000"])
 
 
 @app.errorhandler(Exception)
@@ -46,11 +48,11 @@ from api.endpoints.auth import Login, SignUp
 from api.endpoints.folder import Folder
 from api.endpoints.review import PublicReview, Review
 
-api.add_resource(SignUp, "/signup")
-api.add_resource(Login, "/auth")
-api.add_resource(Folder, "/folder", "/folder/<int:folder_id>")
-api.add_resource(Review, "/review", "/review/<int:review_id>")
-api.add_resource(PublicReview, "/review/public")
+api.add_resource(SignUp, "/signup/")
+api.add_resource(Login, "/auth/")
+api.add_resource(Folder, "/folder/", "/folder/<int:folder_id>")
+api.add_resource(Review, "/review/", "/review/<int:review_id>")
+api.add_resource(PublicReview, "/review/public/")
 
 
 if __name__ == "__main__":
