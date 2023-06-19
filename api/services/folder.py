@@ -5,7 +5,7 @@ from api.models import Folder
 
 
 def get_folders(user):
-    return Folder.query.filter_by(user_id=user.id).order_by(Folder.name)
+    return Folder.query.filter_by(user_id=user.id).order_by(Folder.name).all()
 
 
 def create_folder(user, name):

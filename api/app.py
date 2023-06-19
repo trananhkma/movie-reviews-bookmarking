@@ -29,6 +29,9 @@ db_uri = "postgresql+psycopg2://{user}:{pw}@{host}/{db}".format(
 
 app.config.update(
     SECRET_KEY=os.getenv("SECRET_KEY"),
+    NYT_API_ENDPOINT="https://api.nytimes.com/svc/movies/v2/reviews/search.json",
+    DEFAULT_IMAGE_URL="https://climate.onep.go.th/wp-content/uploads/2020/01/default-image.jpg",
+    NYT_API_KEY=os.getenv("NYT_API_KEY"),
     SQLALCHEMY_DATABASE_URI=db_uri,
 )
 
@@ -41,10 +44,12 @@ api.prefix = "/api"
 # avoid circular import
 from api.endpoints.auth import Login, SignUp
 from api.endpoints.folder import Folder
+from api.endpoints.review import Review
 
 api.add_resource(SignUp, "/signup")
 api.add_resource(Login, "/auth")
 api.add_resource(Folder, "/folder", "/folder/<int:folder_id>")
+api.add_resource(Review, "/review", "/review/public", "/review/<int:review_id>")
 
 
 if __name__ == "__main__":

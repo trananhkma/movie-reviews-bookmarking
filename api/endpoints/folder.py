@@ -1,4 +1,3 @@
-from datetime import datetime
 from http import HTTPStatus
 from typing import List
 
@@ -7,21 +6,9 @@ from flask_restful import Resource
 from pydantic import BaseModel, validator
 
 from api.common.utils import valid_string
+from api.endpoints.review import ReviewResponse
 from api.services.auth import auth_required
 from api.services.folder import create_folder, delete_folder, get_folders
-
-
-class ReviewResponse(BaseModel):
-    id: int
-    display_title: str
-    byline: str
-    summary_short: str
-    publication_date: datetime
-    link: str
-    img: str
-
-    class Config:
-        orm_mode = True
 
 
 class FolderResponse(BaseModel):
@@ -51,16 +38,13 @@ class Folder(Resource):
     @validate()
     def get(self, current_user):
         folders = get_folders(current_user)
-        return ListFolderResponse(__root__=folders.all()), HTTPStatus.OK
+        return ListFolderResponse(__root__=folders), HTTPStatus.OK
 
     @auth_required
     @validate()
     def post(self, current_user, body: CreateFolderRequest):
         folder = create_folder(current_user, body.name)
-        return (
-            FolderResponse(id=folder.id, name=folder.name, reviews=folder.reviews),
-            HTTPStatus.CREATED,
-        )
+        return FolderResponse.from_orm(folder), HTTPStatus.CREATED
 
     @auth_required
     def delete(self, current_user, folder_id):
