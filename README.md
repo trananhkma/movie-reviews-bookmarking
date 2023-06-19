@@ -1,6 +1,8 @@
 # Movie Reviews Bookmarking
 A Web application that allows the user to see movie reviews from The New York Times, and bookmark reviews within the application.
+
 Backend: Flask-restful
+
 Frontend: ReactJS
 
 # Setting up
