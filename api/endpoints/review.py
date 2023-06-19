@@ -8,7 +8,12 @@ from pydantic import BaseModel, validator
 
 from api.common.utils import valid_string
 from api.services.auth import auth_required
-from api.services.review import create_review, delete_review, get_public_reviews
+from api.services.review import (
+    create_review,
+    delete_review,
+    get_public_reviews,
+    get_reviews,
+)
 
 
 class PublicReviewResponse(BaseModel):
@@ -36,7 +41,10 @@ class ReviewResponse(CreateReviewRequest):
 
     class Config:
         orm_mode = True
-        fields = {"folder_id": {"exclude": True}}
+
+
+class ListUserReviewResponse(BaseModel):
+    __root__: List[ReviewResponse]
 
 
 class ListReviewQuery(BaseModel):
@@ -45,10 +53,11 @@ class ListReviewQuery(BaseModel):
 
 
 class Review(Resource):
+    @auth_required
     @validate()
-    def get(self, query: ListReviewQuery):
-        reviews = get_public_reviews(query.query, query.offset)
-        return ListPublicReviewResponse(__root__=reviews), HTTPStatus.OK
+    def get(self, current_user):
+        reviews = get_reviews(current_user)
+        return ListUserReviewResponse(__root__=reviews), HTTPStatus.OK
 
     @auth_required
     @validate()
@@ -60,3 +69,10 @@ class Review(Resource):
     def delete(self, current_user, review_id):
         delete_review(current_user, review_id)
         return None, HTTPStatus.NO_CONTENT
+
+
+class PublicReview(Resource):
+    @validate()
+    def get(self, query: ListReviewQuery):
+        reviews = get_public_reviews(query.query, query.offset)
+        return ListPublicReviewResponse(__root__=reviews), HTTPStatus.OK

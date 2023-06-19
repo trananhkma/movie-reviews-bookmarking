@@ -36,6 +36,10 @@ def get_public_reviews(query=None, offset=0):
     return results
 
 
+def get_reviews(user):
+    return Review.query.filter_by(user_id=user.id).all()
+
+
 def create_review(user, data):
     query = {"user_id": user.id, "id": data.folder_id}
     folder = Folder.query.filter_by(**query).first()
